@@ -9,6 +9,7 @@ public class Segmentation {
     private Image image;        //component labeled image
     private Image binaryImage;  //input binary image
     private Component listedComp[];
+    private int componentsCount;
     private int componentIndex;
 
     private int componentSequence[];
@@ -134,10 +135,13 @@ public class Segmentation {
     }
 
     public void mergeSiblings() {
+        componentsCount = 0;
         for (int i = 2; i < componentIndex; i++) {
+            componentsCount++;
             listedComp[componentRoot[i]].mergeComp(listedComp[i]);
             if (componentRoot[i] != i) {
                 listedComp[i] = null;
+                componentsCount--;
             }
         }
     }
@@ -158,6 +162,23 @@ public class Segmentation {
             }
         }
         System.out.println("components = " + count);
+    }
+    
+    public int getComponentLength()
+    {return componentsCount; }
+    
+    public Component[] getComponents()
+    {
+        Component[] _components = new Component[componentsCount];
+        for (int i = 0, j =0; i < componentIndex; i++) {
+            if(listedComp[i] != null)
+            {
+                    _components[j] = listedComp[i];
+                    j++;
+            }
+        }
+        
+        return _components;
     }
 
     public void drawRectangles() {

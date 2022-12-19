@@ -26,6 +26,8 @@ public class BinarizeForServer
         Segmentation segmentation = new Segmentation(dilatedImage);
         segmentation.segment();
         
+        Binarization otsuBound = new OtsuBounds(srcimg, segmentation.getComponents(), segmentation.getComponentLength());
+        
         //save binarized image
         ImageUtility.writeImage(dilatedImage, savepath);
     }

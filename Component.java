@@ -1,5 +1,5 @@
 public class Component {
-    private int MAX_COMP = 99999;
+    private int MAX_COORD = 99999;
     // instance variables - replace the example below with your own
     private int minX;
     private int maxX;
@@ -7,9 +7,9 @@ public class Component {
     private int maxY;
 
     public Component() {
-        minX = MAX_COMP;
+        minX = MAX_COORD;
         maxX = 0;
-        minY = MAX_COMP;
+        minY = MAX_COORD;
         maxY = 0;
     }
 
