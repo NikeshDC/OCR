@@ -6,8 +6,8 @@ public class Segmentation {
     private int IMG_X = 10;
     private int IMG_Y = 10;
 
-    private Image image;
-    private Image componentImage;
+    private Image image;        //component labeled image
+    private Image binaryImage;  //input binary image
     private Component listedComp[];
     private int componentIndex;
 
@@ -25,7 +25,14 @@ public class Segmentation {
             binImage = null;
             return;
         }
-        image = binImage;
+        binaryImage = binImage;
+        image = new Image(binImage);
+        //copying the input binary image to new image for component labeling
+        /*image = new Image(binaryImage.getWidth(), binaryImage.getHeight(), Image.TYPE.BIN);
+        for (int i = 0; i < IMG_X; i++) 
+            for (int j = 0; j < IMG_Y; j++)
+                image.pixel[i][j] = binaryImage.pixel[i][j];*/
+        
         //binarizedImage = binImage;
         IMG_X = binImage.getWidth();
         IMG_Y = binImage.getHeight();

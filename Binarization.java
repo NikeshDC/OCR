@@ -25,4 +25,21 @@
        
        public Image getBinarizedImage()
        {return binarizedImage;}
+       
+       public static Image simpleThreshold(Image _image, int threshold)
+        {
+            Image binarizedImage = new Image(_image.getWidth(), _image.getHeight());
+            binarizedImage.setType(Image.TYPE.BIN);
+            for (int i=0; i < _image.getWidth(); i++)
+            {
+                for(int j=0; j < _image.getHeight(); j++)
+                {
+                    if (_image.pixel[i][j] < threshold)
+                        {binarizedImage.pixel[i][j] = 1;}
+                    else
+                        {binarizedImage.pixel[i][j] = 0;}
+                }
+            }
+            return binarizedImage;
+        }
     }

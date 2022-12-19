@@ -9,6 +9,7 @@
         private IntegralImage integralImage;  
         //sqaure integral image use will allow for calculating variance (along with integralImage) of the window efficiently irrespective of window size                                              
         private SqrIntegralImage sqrIntegralImage;
+        //##must call explicitly useSqrIntegralImage() to use sqrIntegralImage
         
         //actual bounds of the window (may vary based on center pixel)
         private int noOfPixels;  //these are used for integral image
@@ -30,8 +31,8 @@
         private void initialize(Image _image, int _windowSizeX, int _windowSizeY)
         {
             image = _image;
-            windowSideX = Math.max(1, (_windowSizeX - 1) / 2);   //window must atleast be 3 pixel
-            windowSideY = Math.max(1, (_windowSizeY - 1) / 2);   //window side is the number of pixels on the side of center pixel
+            windowSideX = Math.max(0, (_windowSizeX - 1) / 2);   //window must atleast be 3 pixel
+            windowSideY = Math.max(0, (_windowSizeY - 1) / 2);   //window side is the number of pixels on the side of center pixel
             createIntegralImage();
         }
         
@@ -45,7 +46,7 @@
         private void createSqrIntegralImage()
         { sqrIntegralImage = new SqrIntegralImage(image); }
         
-        public void useSquareIntegralImage()
+        public void useSqrIntegralImage()
         {   createSqrIntegralImage();   }
         
         /*public void setCenter(int x, int y)

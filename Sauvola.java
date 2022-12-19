@@ -35,6 +35,8 @@
                 double sd;    //standard deviation centered around a window of size w
                 int R = 128;  //dynamic range of standartd deviation
                 
+                imageWindow.useSqrIntegralImage();
+                
                 //for every pixel in image calculate threshold value and compare to assign binarization
                 for (int i=0; i < sourceImage.getWidth(); i++)
                 {
@@ -57,6 +59,7 @@
             public void binarize()
             {
                 ImageWindow imageWindow = new ImageWindow(sourceImage, w);
+                binarize(imageWindow);
             }
             
             public void binarize(int secondaryMean, float weight)
