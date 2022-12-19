@@ -6,11 +6,11 @@ public class Segmentation {
     private int IMG_X = 10;
     private int IMG_Y = 10;
 
-    private Image image;        //component labeled image
-    private Image binaryImage;  //input binary image
+    private Image image; // component labeled image
+    private Image binaryImage; // input binary image
     private Component listedComp[];
     private int componentsCount;
-    private int componentIndex;
+    private int componentTotalCount;
 
     private int componentSequence[];
     private int componentRoot[];
@@ -20,21 +20,23 @@ public class Segmentation {
      * Constructor for objects of class Segmentation
      */
     public Segmentation(Image binImage) {
-        if(binImage.getType() != Image.TYPE.BIN)
-        {
+        if (binImage.getType() != Image.TYPE.BIN) {
             System.out.println("Cannot apply segmentation for unbinarized image.");
             binImage = null;
             return;
         }
         binaryImage = binImage;
         image = new Image(binImage);
-        //copying the input binary image to new image for component labeling
-        /*image = new Image(binaryImage.getWidth(), binaryImage.getHeight(), Image.TYPE.BIN);
-        for (int i = 0; i < IMG_X; i++) 
-            for (int j = 0; j < IMG_Y; j++)
-                image.pixel[i][j] = binaryImage.pixel[i][j];*/
-        
-        //binarizedImage = binImage;
+        // copying the input binary image to new image for component labeling
+        /*
+         * image = new Image(binaryImage.getWidth(), binaryImage.getHeight(),
+         * Image.TYPE.BIN);
+         * for (int i = 0; i < IMG_X; i++)
+         * for (int j = 0; j < IMG_Y; j++)
+         * image.pixel[i][j] = binaryImage.pixel[i][j];
+         */
+
+        // binarizedImage = binImage;
         IMG_X = binImage.getWidth();
         IMG_Y = binImage.getHeight();
 
@@ -55,7 +57,7 @@ public class Segmentation {
     }
 
     public void labelComponents() {
-        int componentIndex = 2;  //initial component index (0 and 1 already used for labeling binarized image)
+        int componentIndex = 2; // initial component index (0 and 1 already used for labeling binarized image)
         image.setType(Image.TYPE.COMP);
         // boolean neighbourFound;
         for (int j = 0; j < IMG_Y; j++) {
@@ -102,6 +104,7 @@ public class Segmentation {
                 }
             }
         }
+        componentTotalCount = componentIndex;
     }
 
     public void prepareComponentList() {
@@ -135,18 +138,30 @@ public class Segmentation {
     }
 
     public void mergeSiblings() {
-        componentsCount = 0;
-        for (int i = 2; i < componentIndex; i++) {
-            componentsCount++;
-            listedComp[componentRoot[i]].mergeComp(listedComp[i]);
+        componentsCount = componentTotalCount - 2;
+        for (int i = 2; i < componentTotalCount; i++) {
             if (componentRoot[i] != i) {
+                listedComp[componentRoot[i]].mergeComp(listedComp[i]);
                 listedComp[i] = null;
                 componentsCount--;
             }
+
         }
     }
-    
-    public void segment(){
+
+    public Component[] getComponents() {
+        Component[] components = new Component[componentsCount];
+
+        for (int i = 0, j = 0; i < componentTotalCount; i++) {
+            if (listedComp[i] != null) {
+                components[j] = listedComp[i];
+                j++;
+            }
+        }
+        return components;
+    }
+
+   public void segment(){
         labelComponents();   //label the components initially and set the equivalence relation between these components using componentSequence, componentRoot
         prepareComponentList();  //make component objects for each component labeled above and set their rectangle bounds
         mergeSiblings();  //merge the equivalent component objects
@@ -162,23 +177,6 @@ public class Segmentation {
             }
         }
         System.out.println("components = " + count);
-    }
-    
-    public int getComponentLength()
-    {return componentsCount; }
-    
-    public Component[] getComponents()
-    {
-        Component[] _components = new Component[componentsCount];
-        for (int i = 0, j = 0; i < componentIndex; i++) {
-            if(listedComp[i] != null)
-            {
-                    _components[j] = listedComp[i];
-                    j++;
-            }
-        }
-        
-        return _components;
     }
 
     public void drawRectangles() {
