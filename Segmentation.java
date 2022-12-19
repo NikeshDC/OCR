@@ -147,10 +147,10 @@ public class Segmentation {
     }
     
     public void segment(){
-        labelComponents();
-        prepareComponentList();
-        mergeSiblings();
-        drawRectangles();
+        labelComponents();   //label the components initially and set the equivalence relation between these components using componentSequence, componentRoot
+        prepareComponentList();  //make component objects for each component labeled above and set their rectangle bounds
+        mergeSiblings();  //merge the equivalent component objects
+        drawRectangles(); //show rectangle for each components in a new JFrame window
     }
 
     public void getRectangles() {
@@ -170,7 +170,7 @@ public class Segmentation {
     public Component[] getComponents()
     {
         Component[] _components = new Component[componentsCount];
-        for (int i = 0, j =0; i < componentIndex; i++) {
+        for (int i = 0, j = 0; i < componentIndex; i++) {
             if(listedComp[i] != null)
             {
                     _components[j] = listedComp[i];

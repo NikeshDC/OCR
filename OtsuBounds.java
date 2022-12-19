@@ -1,31 +1,42 @@
-public class OtsuBounds extends Otsu
+public class OtsuBounds extends Binarization
 {
     Component[] components;
-    int componentLength;
+    int L;
+    private int threshold;
     
-    public OtsuBounds(Image srcImage, Component[] _components, int component_length)
+    private void initialize(Image srcImage, Component[] _components)
     {
         components = _components;
-        componentLength = component_length;
         setImage(srcImage);
+    }
+    
+    public OtsuBounds(Image srcImage, Component[] _components)
+    {
+        initialize(srcImage, _components);
+    }
+    
+    public OtsuBounds(Image srcImage, Segmentation segmentation)
+    {
+        initialize(srcImage, segmentation.getComponents());
     }
     
     public void binarize()
     {
-        setBinImageForBounds();    //initially setting all image pixel to background
-        
+        setBinImageForBounds();    //initially setting all image pixel to background (i.e 0)
+        System.out.println("Hello within binarize otsu-bound, no of comps: "+ components.length);
         //for every components binarize seperately
-        for(int i=0; i < componentLength ;i++)
+        for(int i=0; i < components.length ;i++)
         {
             int xs = components[i].getMinX();
             int xe = components[i].getMaxX();
             int ys = components[i].getMinY();
             int ye = components[i].getMaxY();
+            System.out.println(i);
             binarizeWithinBounds(xs, xe, ys, ye);
         }
     }
     
-    public void setBinImageForBounds()
+    private void setBinImageForBounds()
     {
         //binarizedImage = new Image(sourceImage.getWidth(), sourceImage.getHeight()); //already set in Binarization.setImage()
         for(int i=0; i< sourceImage.getWidth(); i++)
