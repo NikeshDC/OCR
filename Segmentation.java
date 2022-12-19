@@ -1,7 +1,4 @@
 import javax.swing.JFrame;
-import java.io.File;
-import java.io.IOException;
-import java.io.FileWriter;
 
 public class Segmentation {
 
