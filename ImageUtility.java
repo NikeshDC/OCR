@@ -109,7 +109,7 @@ public class ImageUtility
             //assuming buffered image is of type RGB else sepearte method is needed
             for(int i=0; i<image.getWidth(); i++)
                 for(int j=0; j<image.getHeight(); j++)
-                    image.pixel[i][j] = bimage.getRGB(i, j) | 0x000000ff; //only take the last byte value
+                    image.pixel[i][j] = bimage.getRGB(i, j) & 0x000000ff; //only take the last byte value
         }
         else //(bimage.getType() == BufferedImage.TYPE_INT_RGB || bimage.getType() == BufferedImage.TYPE_INT_ARGB)
         {
