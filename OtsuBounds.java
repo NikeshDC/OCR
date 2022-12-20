@@ -23,15 +23,14 @@ public class OtsuBounds extends Binarization
     public void binarize()
     {
         setBinImageForBounds();    //initially setting all image pixel to background (i.e 0)
-        System.out.println("Hello within binarize otsu-bound, no of comps: "+ components.length);
+        
         //for every components binarize seperately
         for(int i=0; i < components.length ;i++)
         {
             int xs = components[i].getMinX();
             int xe = components[i].getMaxX();
             int ys = components[i].getMinY();
-            int ye = components[i].getMaxY();
-            System.out.println(i);
+            int ye = components[i].getMaxY();        
             binarizeWithinBounds(xs, xe, ys, ye);
         }
     }

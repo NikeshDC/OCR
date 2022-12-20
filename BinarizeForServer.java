@@ -7,7 +7,7 @@ public class BinarizeForServer
     
     public static void test()
     {
-        binarizeAndSave("a.jpg", "tempa.jpg");
+        binarizeAndSave("05_in.png", "temp05_in.jpg");
     }
         
     public static void binarizeAndSave(String imagepath, String savepath)
@@ -15,7 +15,7 @@ public class BinarizeForServer
         Image srcimg = ImageUtility.readImage(imagepath);
         
         //## image setup
-        float k = 0.25f;
+        float k = 0.020f;
         int w = 70;
         Binarization sauv = new Sauvola(k, w);
         sauv.setImage(srcimg);
