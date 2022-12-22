@@ -15,8 +15,8 @@ public class BinarizeForServer
         Image srcimg = ImageUtility.readImage(imagepath);
         
         //## image setup
-        float k = 0.020f;
-        int w = 70;
+        float k = 0.059f;
+        int w = 30;
         Binarization sauv = new Sauvola(k, w);
         sauv.setImage(srcimg);
         sauv.binarize();
