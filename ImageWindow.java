@@ -13,11 +13,15 @@
         
         //actual bounds of the window (may vary based on center pixel)
         private int noOfPixels;  //these are used for integral image
-        private int wxs, wxs_clamped, wxe, wys, wys_clamped, wye; 
+        private int wxs, wxs_clamped, wxe, wys, wys_clamped, wye; //wye and wxe are clamped value unlike wxs and wys i.e. wye = wye_clamped
         private int wl, wt, wc;
         
-        private int sum;
+        private int sum;  
         private int sqrSum;
+        
+        private static final int MAX_INT = 0x7ffffff;  //maximum value for any integer pixel value (signed)
+        private static final int MIN_INT = 0;  //minimum value for any integer pixel value (signed)
+        
         
         public int getWindowSizeX()
         {return windowSideX * 2 + 1 ;}
@@ -54,12 +58,54 @@
         
         void calculateBounds(int x, int y)
         {   wxs = x-windowSideX - 1;
-            wxs_clamped = Math.max(wxs, -1);  //starting point for actual window
+            wxs_clamped = Math.max(wxs, -1);  //coord before starting point for actual window
             wxe = Math.min(x+windowSideX, image.sizeX - 1);
             wys = y-windowSideY - 1;
             wys_clamped = Math.max(wys, -1);
             wye = Math.min(y+windowSideY, image.sizeY - 1);
             noOfPixels = (wxe - wxs_clamped) * (wye - wys_clamped); //no of pixels inside the actual window
+        }
+        
+        public int[] getMaxMin(int x, int y)
+        {//(x,y) is the center pixel
+            calculateBounds(x,y);
+            int maxval = MIN_INT, minval = MAX_INT;
+            for(int i=wxs_clamped+1; i<= wxe; i++)
+                for(int j =wys_clamped+1; j<= wye; i++)
+                {
+                    if(image.pixel[i][j] > maxval)
+                        maxval = image.pixel[i][j];
+                    if(image.pixel[i][j] < minval)
+                        minval = image.pixel[i][j];
+                }
+            int maxmin[] = {maxval, minval};
+            return maxmin;
+        }
+        
+        public int getMax(int x, int y)
+        {//(x,y) is the center pixel
+            calculateBounds(x,y);
+            int maxval = MIN_INT;
+            for(int i=wxs_clamped+1; i<= wxe; i++)
+                for(int j =wys_clamped+1; j<= wye; j++)
+                {
+                    if(image.pixel[i][j] > maxval)
+                        maxval = image.pixel[i][j];
+                }
+            return maxval;
+        }
+        
+        public int getMin(int x, int y)
+        {//(x,y) is the center pixel
+            calculateBounds(x,y);
+            int minval = MAX_INT;
+            for(int i=wxs_clamped+1; i<= wxe; i++)
+                for(int j =wys_clamped+1; j<= wye; j++)
+                {
+                    if(image.pixel[i][j] < minval)
+                        minval = image.pixel[i][j];
+                }
+            return minval;
         }
         
         public int getMaxForBinarized(int x, int y)
