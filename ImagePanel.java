@@ -17,7 +17,7 @@ public class ImagePanel extends JPanel {
     
     public void paint(Graphics g) {
         if (img != null)
-            g.drawImage(bimg, 0, 0, null);
+            g.drawImage(bimg, 0, 0, this.getWidth(), this.getHeight(), null);
     }
 
     public void setBuffImgComp(Image _img) {
