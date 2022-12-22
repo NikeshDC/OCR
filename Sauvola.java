@@ -6,7 +6,7 @@
             public Sauvola(float _k, int _windowSize)
             { k = _k;     w = _windowSize; }
             
-            public void setParam(float _k, int _w)
+            public void setParameters(float _k, int _w)
             {  k = _k;  w = _w; }
             
             
@@ -44,9 +44,14 @@
                     {
                         mean = imageWindow.mean(i, j);
                         sd =  Math.sqrt(imageWindow.variance(i, j, mean));
-                        threshold = (int) (mean * (1 + k *(sd/R - 1)));
+                        //threshold = (int) (mean * (1 + k *(sd/R - 1)));
                         //adaptive methods---
-                        //threshold = (int) (mean * (1 + k * (1 - sd/mean) *(sd/R - 1)));
+                        //float localAdaptiveFactor1 = sd / mean;
+                        
+                        int maxPix = imageWindow.getMax(i, j);
+                        int minPix = imageWindow.getMin(i, j);
+                        float localAdaptiveFactor2 = ((float)maxPix - minPix) / (maxPix);
+                        threshold = (int) (mean * (1 + k * localAdaptiveFactor2 *(sd/R - 1)));
                         //---
                         if (sourceImage.pixel[i][j] < threshold)
                             {binarizedImage.pixel[i][j] = 1;}
