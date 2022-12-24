@@ -23,7 +23,7 @@ public class OtsuBounds extends Binarization
     public void binarize()
     {
         setBinImageForBounds();    //initially setting all image pixel to background (i.e 0)
-        
+
         //for every components binarize seperately
         for(int i=0; i < components.length ;i++)
         {
