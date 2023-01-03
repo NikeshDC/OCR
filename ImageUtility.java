@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ImageUtility
 {
@@ -31,13 +32,13 @@ public class ImageUtility
         File file = new File(filepath);
         return readImage(file);
     }
-    public Image readImageInGrayScale(File file)
+    public static Image readImageInGrayScale(File file)
     {
         Image image = readImage(file);
         convertRGB2gray(image);
         return image;
     }
-    public Image readImageInGrayScale(String filepath)
+    public static Image readImageInGrayScale(String filepath)
     {
         File file = new File(filepath);
         return readImageInGrayScale(file);
@@ -206,7 +207,79 @@ public class ImageUtility
                 image.pixel[i][j] = gray;
             }
     }
-  
+    
+    public static ArrayList<File> getAllFilesInDirectory(String directoryName)
+    {
+        ArrayList<File> files = new ArrayList<File>();
+        getAllFilesInDirectory(files,new File(directoryName));
+        return files;
+    }
+    private static void getAllFilesInDirectory(ArrayList<File> files, File sourceDirectory)
+    {
+        for(File srcfile : sourceDirectory.listFiles())
+        {
+            if(srcfile.isDirectory())
+            {
+                getAllFilesInDirectory(files, srcfile);
+                continue;
+            }
+            files.add(srcfile);
+        }
+    }
+    public static void filterGroundTruthImages(ArrayList<File> files)
+    {
+        ArrayList<File> gtFiles = new ArrayList<File>();
+        for(File srcfile : files)
+        {
+            String srcfilename = srcfile.getPath();
+            int fileExtensionIndex = srcfilename.lastIndexOf('.');
+            
+            if(srcfilename.substring(fileExtensionIndex - 3, fileExtensionIndex).equals("_gt"))
+            {
+                gtFiles.add(srcfile);
+                continue;
+            }
+        }
+        files.removeAll(gtFiles);
+    }
+    public static ArrayList<File> getGroundTruthFiles(ArrayList<File> inputFiles)
+    {
+        ArrayList<File> gtFiles = new ArrayList<File>();
+        for(File srcfile : inputFiles)
+        {
+            String srcfilename = srcfile.getPath();
+            int fileExtensionIndex = srcfilename.lastIndexOf('.');
+            char[] temp = srcfilename.toCharArray();
+            //if gt image skip the file
+            //System.out.println(srcfilename.substring(filenamelen - 7, filenamelen - 3));
+            if(srcfilename.substring(fileExtensionIndex - 3, fileExtensionIndex).equals("_gt"))
+            {
+                System.out.println("GT file found in input image files");
+            }
+            //make 01_in.png as 01_gt.png
+            temp[fileExtensionIndex - 1] = 't';
+            temp[fileExtensionIndex - 2] = 'g';
+            String gtfilename = String.copyValueOf(temp);
+            gtFiles.add(new File(gtfilename));
+        }
+        return gtFiles;
+    }
+    public static File getGroundTruthFile(File inputFile)
+    {
+        String srcfilename = inputFile.getPath();
+        int fileExtensionIndex = srcfilename.lastIndexOf('.');
+        char[] temp = srcfilename.toCharArray();
+       
+        if(srcfilename.substring(fileExtensionIndex - 3, fileExtensionIndex).equals("_gt"))
+        {
+            System.out.println("GT file provided");
+        }
+        //make 01_in.png as 01_gt.png
+        temp[fileExtensionIndex - 1] = 't';
+        temp[fileExtensionIndex - 2] = 'g';
+        String gtfilename = String.copyValueOf(temp);
+        return new File(gtfilename);
+    }
     
     
     //methods below are appropriate for grayscale images
@@ -233,7 +306,7 @@ public class ImageUtility
     
     public static int findMinPixelValue(Image img, int xs, int xe, int ys, int ye)
     {
-        int min = 0xffffffff;  
+        int min = Integer.MAX_VALUE;  
         for(int i=0; i<img.getWidth(); i++)
             for(int j=0; j<img.getHeight(); j++)
             {

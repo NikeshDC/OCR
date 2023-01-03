@@ -27,7 +27,9 @@ public class BinarizationAccuracy
         
         Image groundTruthImage = Binarization.simpleThreshold(ImageUtility.readImage(groundTruthImageFile), SimpleThreshold);
         Sauvola sauvola = new Sauvola(0.2f, 50);
-        sauvola.setImage(ImageUtility.readImage(sourceImageFile));
+        Image sourceImage = ImageUtility.readImage(sourceImageFile);
+        //ImageWindow imageWindow = new ImageWindow(sourceImage, 10);
+        sauvola.setImage(sourceImage);
         
         //w-range
         int min_w = w_range[0];
@@ -44,9 +46,10 @@ public class BinarizationAccuracy
         float max_f1_w = 0f;   //w-value where max f1 occurs
         float f1;
         
-        for(float k=min_k; k <= max_k; k+=step_k)
+        for(int w=min_w; w<= max_w; w+= step_w)
         {
-            for(int w=min_w; w<= max_w; w+= step_w)
+            //imageWindow.setWindowSize(w);
+            for(float k=min_k; k <= max_k; k+=step_k)
             {
                 sauvola.setParameters(k, w);
                 sauvola.binarize();

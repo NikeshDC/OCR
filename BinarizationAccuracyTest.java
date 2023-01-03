@@ -3,8 +3,8 @@ import java.io.File;
 public class BinarizationAccuracyTest
 {
     BinarizationAccuracy binarizationAccuracy;
-    float[] k_range = {0f, 0.1f, 0.9f};
-    int[] w_range = {40,10,70};
+    float[] k_range = {0f, 0.05f, 0.9f};
+    int[] w_range = {40,10,100};
     
     public BinarizationAccuracyTest()
     {
@@ -37,8 +37,8 @@ public class BinarizationAccuracyTest
     
     public void compareImagesUsingSauvolaAtRangeAndPrintAll()
     {
-        String infile = "05_in.png";
-        String gtfile = "05_gt.png";
+        String infile = "DIBCO\\2009\\printed\\01_in.png";
+        String gtfile = "DIBCO\\2009\\printed\\01_gt.png";
         float[] bestValues = binarizationAccuracy.compareImagesUsingSauvolaAtRangeAndPrintAll(infile, gtfile, k_range, w_range);
         //System.out.println("max f1: "+ bestValues[0] + ", k: "+ bestValues[1] + ", w: "+ bestValues[2]);
     }

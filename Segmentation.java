@@ -165,7 +165,7 @@ public class Segmentation {
         labelComponents();   //label the components initially and set the equivalence relation between these components using componentSequence, componentRoot
         prepareComponentList();  //make component objects for each component labeled above and set their rectangle bounds
         mergeSiblings();  //merge the equivalent component objects
-        drawRectangles(); //show rectangle for each components in a new JFrame window
+        //drawRectangles(); //show rectangle for each components in a new JFrame window
     }
 
     public void getRectangles() {
