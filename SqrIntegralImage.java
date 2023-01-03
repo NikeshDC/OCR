@@ -2,7 +2,7 @@
     public class SqrIntegralImage
     {
         protected Image image;  //the image of which to create the integral image for
-        public int[][] pixel;  //size must be big enough to hold the sum of square of all pixels of the image
+        public long[][] pixel;  //size must be big enough to hold the sum of square of all pixels of the image
         public SqrIntegralImage(Image _image)
         {
             image = _image;
@@ -11,7 +11,7 @@
         
         protected void constructIntegralImage()
         {
-            pixel = new int[image.getWidth()][image.getHeight()];
+            pixel = new long[image.getWidth()][image.getHeight()];
             pixel[0][0] = image.pixel[0][0] * image.pixel[0][0]; //first value of integral image is the initial pixel value squared 
             
             //summing pixel-squares along the first row
