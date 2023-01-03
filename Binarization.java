@@ -5,9 +5,28 @@
         
        public abstract void binarize();
        
+       protected void checkBeforeBinarize()
+       {
+           if(sourceImage == null)
+            {
+                System.out.println("No source image set");
+                return;
+            }
+            else if(binarizedImage == null)
+            {
+                System.out.println("Binarized image set for Image for binarization");
+                binarizedImage = new Image(sourceImage.getWidth(), sourceImage.getHeight());
+                binarizedImage.setType(Image.TYPE.BIN);
+            }
+       }
+       
        private static void rectifyImage(Image image)
        {
-           if(image.getType() == Image.TYPE.RGB)
+           if(image == null)
+           {
+               System.out.println("Source image null given!! <Binarization Image Setting>");
+           }
+           else if(image.getType() == Image.TYPE.RGB)
            {   
                //System.out.println("Converted RGB image to gary for binarization");
                ImageUtility.convertRGB2gray(image);
@@ -18,14 +37,27 @@
            }
        }
        
-       public void setImage(Image _srcImage)
+       private void setImage(Image _srcImage, boolean forceSet)
        {
+           //if force set then redo everything required else check the image to see if it is already being used
+           if(!forceSet && _srcImage == sourceImage)
+                return;
            sourceImage = _srcImage;
            //convert rgb image to grayscale if necessary
            rectifyImage(_srcImage);
            
            binarizedImage = new Image(sourceImage.getWidth(), sourceImage.getHeight());
            binarizedImage.setType(Image.TYPE.BIN);
+       }
+       
+       public void setImage(Image srcImage)
+       {
+           setImage(srcImage, false);
+       }
+       
+       public void forceSetImage(Image srcImage)
+       {
+           setImage(srcImage, true);
        }
        
        public Image getBinarizedImage()
