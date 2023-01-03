@@ -71,5 +71,28 @@ public class ImageHistogram
         constructHistogram(xs,xe,ys,ye);
     }
     
+    public int getMode()
+    {
+        int mode = 0;
+        for(int i=1; i < L; i++)
+        {
+            if(level[i] > mode)
+                mode = i;
+        }
+        return mode;
+    }
+    
+    public double getEntropy()
+    {
+        double entropy = 0.0;
+        double log2base = Math.log(2);
+        for(int i=0; i < L; i++)
+        {
+            if (level_normalized[i] !=0)
+                entropy += -level_normalized[i] * Math.log(level_normalized[i])/log2base;
+        }        
+        return entropy;
+    }
+    
     int getLevel(){return L;}
 }
