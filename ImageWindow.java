@@ -1,5 +1,4 @@
-
-    public class ImageWindow
+public class ImageWindow
     {
         Image image;
         int windowSideX;
@@ -11,15 +10,18 @@
         private SqrIntegralImage sqrIntegralImage;
         //##must call explicitly useSqrIntegralImage() to use sqrIntegralImage
         
+        private boolean createdIntegralImage = false;
+        private boolean createdSqrIntegralImage = false;
+        
         //actual bounds of the window (may vary based on center pixel)
         private int noOfPixels;  //these are used for integral image
         private int wxs, wxs_clamped, wxe, wys, wys_clamped, wye; //wye and wxe are clamped value unlike wxs and wys i.e. wye = wye_clamped
         private int wl, wt, wc;
         
         private int sum;  
-        private int sqrSum;
+        private long sqrSum;
         
-        private static final int MAX_INT = 0x7ffffff;  //maximum value for any integer pixel value (signed)
+        private static final int MAX_INT = Integer.MAX_VALUE;  //maximum value for any integer pixel value (signed)
         private static final int MIN_INT = 0;  //minimum value for any integer pixel value (signed)
         
         
@@ -28,15 +30,31 @@
          public int getWindowSizeY()
         {return windowSideY * 2 + 1 ;}
         public void setImage(Image _image)
-        {image = _image;}
+        {
+            if(image != _image)
+            {
+                createdSqrIntegralImage = false;
+                createdIntegralImage = false;
+                //System.out.println("Hello image setting");
+            }
+            image = _image;
+        }
         public Image getImage()
         {return image;}
+        public void setWindowSize(int _windowSizeX, int _windowSizeY)
+        {
+            windowSideX = Math.max(0, (_windowSizeX - 1) / 2);   //window must atleast be 3 pixel
+            windowSideY = Math.max(0, (_windowSizeY - 1) / 2);   //window side is the number of pixels on the side of center pixel
+        }
+        public void setWindowSize(int _windowSize)
+        {
+            setWindowSize(_windowSize, _windowSize);
+        }
         
         private void initialize(Image _image, int _windowSizeX, int _windowSizeY)
         {
-            image = _image;
-            windowSideX = Math.max(0, (_windowSizeX - 1) / 2);   //window must atleast be 3 pixel
-            windowSideY = Math.max(0, (_windowSizeY - 1) / 2);   //window side is the number of pixels on the side of center pixel
+            setImage(_image);
+            setWindowSize(_windowSizeX, _windowSizeY);
             createIntegralImage();
         }
         
@@ -46,9 +64,19 @@
         {   initialize(_image, _windowSizeX, _windowSizeY);   }
         
         private void createIntegralImage()
-        { integralImage = new IntegralImage(image); }
+        {
+            if(!createdIntegralImage)
+                integralImage = new IntegralImage(image); 
+            //System.out.println("created integral");
+            createdIntegralImage = true;
+        }
         private void createSqrIntegralImage()
-        { sqrIntegralImage = new SqrIntegralImage(image); }
+        { 
+            if(!createdSqrIntegralImage)
+                sqrIntegralImage = new SqrIntegralImage(image); 
+            //System.out.println("created sqrintegral");
+            createdSqrIntegralImage = false;
+        }
         
         public void useSqrIntegralImage()
         {   createSqrIntegralImage();   }
@@ -64,6 +92,12 @@
             wys_clamped = Math.max(wys, -1);
             wye = Math.min(y+windowSideY, image.sizeY - 1);
             noOfPixels = (wxe - wxs_clamped) * (wye - wys_clamped); //no of pixels inside the actual window
+        }
+        
+        public int[] getBounds()
+        {//can call after applying findSum or findSqrSum
+            int[] bounds = {wxs_clamped+1, wxe, wys_clamped+1, wye};
+            return bounds;
         }
         
         public int[] getMaxMin(int x, int y)
@@ -139,7 +173,7 @@
         }
         
         public int getSum() {return sum;}
-        public int getSqrSum() {return sqrSum;}
+        public long getSqrSum() {return sqrSum;}
         
         public void findSum(int x, int y)
         {//return sum of pixels centered around (x,y) in the image using integralImage
@@ -171,7 +205,8 @@
             //this should be called after corresponding sum() call so that which wxs, wxe... shouldnot be computed again
             //i.e. this is only for finding variance
             calculateBounds(x, y);
-
+            
+            long wl, wt, wc;
             //int wl; //sum of pixels to left of the window to subtract to obtain the sum of window using integral image
             if (wxs < 0)
                 {wl = 0;}
@@ -212,6 +247,7 @@
                 {wc = integralImage.pixel[wxs][wys];}
             sum = integralImage.pixel[wxe][wye] - wl -wt +wc;
             
+            long wl, wt, wc;
             //squaresum-------------------------------------------------------------------------------------------------------------
             if (wxs < 0)
                 {wl = 0;}
@@ -248,12 +284,12 @@
             //int wxs, wxe, wys, wye; //starting and ending xy coordinate positions; wxs = window start postion for x axis
             //int _mean = mean(x,y); mean has been already supplied in parameter itself 
             findSqrSum(x,y);
-            return (sqrSum/noOfPixels - _mean * _mean);
+            return (int)(sqrSum/noOfPixels - _mean * _mean);
         }
         
         public int getImageVariance(int _mean)
         {
-            return (sqrIntegralImage.pixel[image.sizeX - 1][image.sizeY - 1]/(image.sizeX * image.sizeY) - _mean * _mean);
+            return (int)(sqrIntegralImage.pixel[image.sizeX - 1][image.sizeY - 1]/(image.sizeX * image.sizeY) - _mean * _mean);
         }
         
         public int variance(int x, int y)
@@ -261,6 +297,6 @@
             //int wxs, wxe, wys, wye; //starting and ending xy coordinate positions; wxs = window start postion for x axis
             findSumAndSqrSum(x, y);
             int _mean = sum / noOfPixels;
-            return (sqrSum/noOfPixels - _mean * _mean);
+            return (int)(sqrSum/noOfPixels - _mean * _mean);
         }
     }
