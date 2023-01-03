@@ -51,4 +51,25 @@ public class Image
     
     public int getMaxY()
     { return sizeY -1; }
+    
+    public void subtract(Image image)
+    {
+        subtract(image, 1.0f);
+    }
+    public void subtract(Image image, float reducer)
+    {//perform pixelwise subtraction
+        if(image.getWidth() != getWidth() || image.getHeight() != getHeight() )
+        {
+            System.out.println("Cannot subtract images of different size!");
+            return;
+        }
+        if(image.getType() != getType())
+        {
+            System.out.println("Cannot subtract images of different types!");
+            return;
+        }
+        for (int i = 0; i < sizeX; i++) 
+            for (int j = 0; j < sizeY; j++)
+                pixel[i][j] = Math.max(pixel[i][j] - (int)(image.pixel[i][j] * reducer), 0);
+    }
 }
