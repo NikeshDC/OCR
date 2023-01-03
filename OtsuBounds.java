@@ -47,11 +47,8 @@ public class OtsuBounds extends Binarization
         }
     }
     
-    private void binarizeWithinBounds(int xs, int xe, int ys, int ye)
+    public void calculateThresholdWithinBounds(int xs, int xe, int ys, int ye)
     {
-        //apply otsu binarization only within given bounds
-        //must set binarized image once before using within bounds
-        
         ImageHistogram histogram = new ImageHistogram(sourceImage, xs, xe, ys, ye);
         L = histogram.getLevel();
         
@@ -80,6 +77,12 @@ public class OtsuBounds extends Binarization
                 threshold = k;  //all pixels from 0 up to and including k are 'text'
             }
         }
+    }
+    
+    private void binarizeWithinBounds(int xs, int xe, int ys, int ye)
+    {
+        //apply otsu binarization only within given bounds
+        //must set binarized image once before using within bounds
         
         for(int i= xs; i<= xe; i++)
         {
