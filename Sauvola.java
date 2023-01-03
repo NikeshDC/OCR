@@ -36,6 +36,11 @@
                 int R = 128;  //dynamic range of standartd deviation
                 
                 imageWindow.useSqrIntegralImage();
+                //System.out.println(imageWindow.getWindowSizeX());
+                
+                //applying local prediction of k
+                //Otsu otsu = new Otsu();
+                //otsu.setImage(this.sourceImage);
                 
                 //for every pixel in image calculate threshold value and compare to assign binarization
                 for (int i=0; i < sourceImage.getWidth(); i++)
@@ -44,14 +49,20 @@
                     {
                         mean = imageWindow.mean(i, j);
                         sd =  Math.sqrt(imageWindow.variance(i, j, mean));
-                        //threshold = (int) (mean * (1 + k *(sd/R - 1)));
+                        
+                        //local k prediction
+                        //KPrediction kpred = new KPrediction(otsu, imageWindow.getBounds());
+                        //k = (float)kpred.getK();
+                        
+                        //System.out.println(imageWindow.variance(i, j, mean));
+                        threshold = (int) (mean * (1 - k *(1- sd/R)));
                         //adaptive methods---
                         //float localAdaptiveFactor1 = sd / mean;
                         
-                        int maxPix = imageWindow.getMax(i, j);
-                        int minPix = imageWindow.getMin(i, j);
-                        float localAdaptiveFactor2 = ((float)maxPix - minPix) / (maxPix);
-                        threshold = (int) (mean * (1 + k * localAdaptiveFactor2 *(sd/R - 1)));
+                        //int maxPix = imageWindow.getMax(i, j);
+                        //int minPix = imageWindow.getMin(i, j);
+                        //float localAdaptiveFactor2 = ((float)maxPix - minPix) / (maxPix);
+                        //threshold = (int) (mean * (1 + k * localAdaptiveFactor2 *(sd/R - 1)));
                         //---
                         if (sourceImage.pixel[i][j] < threshold)
                             {binarizedImage.pixel[i][j] = 1;}
