@@ -408,4 +408,26 @@ public class ImageUtility
        Image erodedImg = erode(img, windowSize, windowSize);
        return erodedImg;
     }
+    
+    public static Image open(Image img, int windowSizeX, int windowSizeY)
+    {
+        Image erodedImage = erode(img, windowSizeX, windowSizeY);
+        Image openedImage = dilate(erodedImage, windowSizeX, windowSizeY);
+        return openedImage;
+    }
+    public static Image open(Image img, int windowSize)
+    {
+        return open(img, windowSize, windowSize);
+    }
+    
+    public static Image close(Image img, int windowSizeX, int windowSizeY)
+    {
+        Image dilatedImage = dilate(img, windowSizeX, windowSizeY);
+        Image closedImage = erode(dilatedImage, windowSizeX, windowSizeY);
+        return closedImage;
+    }
+    public static Image close(Image img, int windowSize)
+    {
+        return close(img, windowSize, windowSize);
+    }
 }
