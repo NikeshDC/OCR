@@ -1,4 +1,5 @@
 import javax.swing.JFrame;
+import java.awt.image.BufferedImage;
 
 public class Segmentation {
 
@@ -9,7 +10,15 @@ public class Segmentation {
     private Image image; // component labeled image
     private Image binaryImage; // input binary image
     private Component listedComp[];
+    private Component components[];
+
+    // values in components is correct
+    private boolean COMPONENTS_SET;
+    private boolean COMPONENT_IMAGE_SET;
+    // Count of components after merging siblings
     private int componentsCount;
+
+    // component index i.e. label count
     private int componentTotalCount;
 
     private int componentSequence[];
@@ -45,6 +54,8 @@ public class Segmentation {
         componentSequence = new int[MAX_COMP];
         componentRoot = new int[MAX_COMP];
         componentTrailer = new int[MAX_COMP];
+        COMPONENTS_SET = false;
+        COMPONENT_IMAGE_SET = false;
     }
 
     public void printImg() {
@@ -125,11 +136,13 @@ public class Segmentation {
                         // setValues compares and sets diagonal co-ordinate values for component
                         // rectangle
                         listedComp[image.pixel[i][j]].setValues(i, j);
+                        listedComp[image.pixel[i][j]].increaseCountOfBlackPixels();
                     }
                     // For parts of components already initiallized, setValues is only called
                     else {
 
                         listedComp[image.pixel[i][j]].setValues(i, j);
+                        listedComp[image.pixel[i][j]].increaseCountOfBlackPixels();
                     }
 
                 }
@@ -143,6 +156,7 @@ public class Segmentation {
             if (componentRoot[i] != i) {
                 listedComp[componentRoot[i]].mergeComp(listedComp[i]);
                 listedComp[i] = null;
+
                 componentsCount--;
             }
 
@@ -150,7 +164,16 @@ public class Segmentation {
     }
 
     public Component[] getComponents() {
-        Component[] components = new Component[componentsCount];
+        if (COMPONENTS_SET) {
+            return components;
+        } else {
+            storeComponents();
+        }
+        return components;
+    }
+
+    public void storeComponents() {
+        components = new Component[componentsCount];
 
         for (int i = 0, j = 0; i < componentTotalCount; i++) {
             if (listedComp[i] != null) {
@@ -158,33 +181,49 @@ public class Segmentation {
                 j++;
             }
         }
-        return components;
+        COMPONENTS_SET = true;
+        // return components;
     }
 
-   public void segment(){
-        labelComponents();   //label the components initially and set the equivalence relation between these components using componentSequence, componentRoot
-        prepareComponentList();  //make component objects for each component labeled above and set their rectangle bounds
-        mergeSiblings();  //merge the equivalent component objects
-        //drawRectangles(); //show rectangle for each components in a new JFrame window
+    public void setComponentsImage() {
+        for (int i = 0; i < componentTotalCount; i++) {
+            if (listedComp[i] != null) {
+                listedComp[i].setImage(binaryImage);
+            }
+        }
+        COMPONENT_IMAGE_SET = true;
+    }
+
+    public void segment() {
+        labelComponents(); // label the components initially and set the equivalence relation between these
+                           // components using componentSequence, componentRoot
+        prepareComponentList(); // make component objects for each component labeled above and set their
+                                // rectangle bounds
+        mergeSiblings(); // merge the equivalent component objects
+        setComponentsImage();
+        // drawRectangles(listedComp); // show rectangle for each components in a new
+        // JFrame
+        // window
+
     }
 
     public void getRectangles() {
         int count = 0;
-        for (int i = 0; i < listedComp.length - 1; i++) {
-            if (listedComp[i] != null) {
-                listedComp[i].showValues(i);
+        for (int i = 0; i < components.length - 1; i++) {
+            if (components[i] != null) {
+                components[i].showValues(i);
                 count++;
             }
         }
         System.out.println("components = " + count);
     }
 
-    public void drawRectangles() {
+    public void drawRectangles(Component[] comp) {
+        System.out.println("Comp" + componentsCount);
         ImagePanel imgP = new ImagePanel();
-        Image img = new Image(IMG_X, IMG_Y);
         JFrame window = new JFrame();
         // printImg();
-        imgP.setBuffBoundingOnBinarized(image, listedComp);
+        imgP.setBuffBoundingOnBinarized(image, comp);
 
         window.getContentPane().add(imgP);
 
@@ -192,5 +231,32 @@ public class Segmentation {
         window.setSize(IMG_X + 50, IMG_Y + 50);
         window.setVisible(true);
 
+    }
+
+    public void saveComponentImage(Component[] comp, String savepath) {
+        ImagePanel imgP = new ImagePanel();
+        BufferedImage bimg = imgP.getbBufferedImageWithComponents(image, comp);
+        ImageUtility.writeImage(bimg, savepath);
+
+    }
+
+    public Image getSegmentedImage() {
+        return image;
+    }
+
+    public void setComponentsArray(Component[] comps) {
+        components = comps;
+        int count = 0;
+        for (int i = 0; i < componentsCount; i++) {
+            if (comps[i] != null) {
+                count++;
+            }
+        }
+        componentsCount = count;
+        // componentsCount = comps.length;
+    }
+
+    public int getComponentsCount() {
+        return componentsCount;
     }
 }
