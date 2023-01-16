@@ -430,4 +430,12 @@ public class ImageUtility
     {
         return close(img, windowSize, windowSize);
     }
+    public static Image addComponentsOnImage(Component[] components, int componentsCount, int sizeX, int sizeY) {
+        Image newImage = new Image(sizeX, sizeY);
+        newImage.setType(Image.TYPE.BIN);
+        for (int i = 0; i < componentsCount; i++) {
+            components[i].addComponentOnImage(newImage);
+        }
+        return newImage;
+    }
 }
