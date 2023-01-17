@@ -2,6 +2,7 @@
         {
             int w;
             float k; //k ranges from 0 to 1
+            int R;
             
             public Sauvola(float _k, int _windowSize)
             { k = _k;     w = _windowSize; }
@@ -9,6 +10,13 @@
             public void setParameters(float _k, int _w)
             {  k = _k;  w = _w; }
             
+            public void setImage(Image image)
+            {
+                super.setImage(image);
+                int maxP = ImageUtility.findMaxPixelValue(image);
+                int minP = ImageUtility.findMinPixelValue(image);
+                R = (maxP - minP)/2;
+            }
             
             public void binarize(ImageWindow imageWindow)
             {
@@ -33,7 +41,7 @@
                 int threshold;
                 int mean;   //mean centered around a window of size w
                 double sd;    //standard deviation centered around a window of size w
-                int R = 128;  //dynamic range of standartd deviation
+                //int R = 128;  //dynamic range of standartd deviation
                 
                 imageWindow.useSqrIntegralImage();
                 //System.out.println(imageWindow.getWindowSizeX());
@@ -41,6 +49,7 @@
                 //applying local prediction of k
                 //Otsu otsu = new Otsu();
                 //otsu.setImage(this.sourceImage);
+                
                 
                 //for every pixel in image calculate threshold value and compare to assign binarization
                 for (int i=0; i < sourceImage.getWidth(); i++)
@@ -55,7 +64,7 @@
                         //k = (float)kpred.getK();
                         
                         //System.out.println(imageWindow.variance(i, j, mean));
-                        threshold = (int) (mean * (1 - k *(1- sd/R)));
+                        threshold = (int) (mean * (1 + k *(sd/R - 1)));
                         //adaptive methods---
                         //float localAdaptiveFactor1 = sd / mean;
                         

@@ -3,7 +3,7 @@ import java.io.File;
 public class BinarizationAccuracyTest
 {
     BinarizationAccuracy binarizationAccuracy;
-    float[] k_range = {0f, 0.05f, 0.9f};
+    float[] k_range = {0f, 0.005f, 0.9f};
     int[] w_range = {40,10,100};
     
     public BinarizationAccuracyTest()

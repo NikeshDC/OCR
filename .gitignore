@@ -4,7 +4,7 @@
 package.bluej
 *.txt
 *.png
-/compiled/*
+/compiled/
 /DIBCO/
 .gitignore
 BinarizationAccuracy.java
