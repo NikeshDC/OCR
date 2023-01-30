@@ -14,6 +14,10 @@ public class ImagePanel extends JPanel {
     private void setBuffImg() {
         bimg = ImageUtility.getBufferedImage(img);
     }
+    public BufferedImage getBufferedImage()
+    {
+        return bimg;
+    }
     
     public void paint(Graphics g) {
         if (img != null)
