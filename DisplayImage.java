@@ -40,7 +40,6 @@ public class DisplayImage
        window.setVisible(false);
    }
    
-   
    public static void displayNew(Image image, int width, int height)
    {//height and width represent the window's height and width and not of image
        JFrame window = new JFrame();
@@ -58,5 +57,23 @@ public class DisplayImage
        int height = DEFAULT_HEIGHT;
        int width = (int)(height * (float)image.getWidth() / image.getHeight());
        displayNew(image, width, height);
+   }
+   
+   
+   
+   public static void displayNew(ImagePanel imagePanel, int width, int height)
+   {//height and width represent the window's height and width and not of image
+       JFrame window = new JFrame();
+       imagePanel.setBounds(0,0,width, height);
+       window.getContentPane().add(imagePanel);
+       window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+       window.setSize(width, height);
+       window.setVisible(true);
+   }
+   public static void displayNew(ImagePanel imagePanel)
+   {//height and width represent the window's height and width and not of image
+       int height = DEFAULT_HEIGHT;
+       int width = (int)(height * (float)imagePanel.getBufferedImage().getWidth() / imagePanel.getBufferedImage().getHeight());
+       displayNew(imagePanel, width, height);
    }
 }
