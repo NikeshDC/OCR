@@ -14,7 +14,7 @@ DatasetPreparerTest.java
 AccuracyMeasure.java
 ImageProperties.java
 ImagePropertiesTest.java
-Test.java
+*Test.java
 Bradely.java
 BinarizeForServerTest.java
 /test/
