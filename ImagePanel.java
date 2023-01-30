@@ -11,9 +11,11 @@ public class ImagePanel extends JPanel {
         img = _img;
         setBuffImg();
     }
+
     private void setBuffImg() {
         bimg = ImageUtility.getBufferedImage(img);
     }
+
     public BufferedImage getBufferedImage()
     {
         return bimg;
@@ -55,19 +57,24 @@ public class ImagePanel extends JPanel {
         for (int i = 0; i < listedComp.length - 1; i++) {
             if (listedComp[i] != null) {
 
-                for (int j = listedComp[i].getMinX(); j < listedComp[i].getMaxX(); j++) {
+                for (int j = listedComp[i].getMinX(); j <= listedComp[i].getMaxX(); j++) {
                     bimg.setRGB(j, listedComp[i].getMinY(), 0xffff0000);
                     // System.out.println("fa");
                     bimg.setRGB(j, listedComp[i].getMaxY(), 0xffff0000);
 
                 }
 
-                for (int j = listedComp[i].getMinY(); j < listedComp[i].getMaxY(); j++) {
+                for (int j = listedComp[i].getMinY(); j <= listedComp[i].getMaxY(); j++) {
                     bimg.setRGB(listedComp[i].getMinX(), j, 0xffff0000);
                     bimg.setRGB(listedComp[i].getMaxX(), j, 0xffff0000);
 
                 }
             }
         }
+    }
+
+    public BufferedImage getbBufferedImageWithComponents(Image _img, Component[] listedComp) {
+        setBuffBoundingOnBinarized(_img, listedComp);
+        return bimg;
     }
 }
