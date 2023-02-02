@@ -10,6 +10,11 @@ public class Component {
     private int countOfBlackPixels;
     private boolean componentSet;
     private Image selfImage;
+    private int[] centroid;
+    //
+    private float areaDensityScore;
+    private float pageSizeScore;
+    private float aspectRatioScore;
 
     public Component() {
         minX = MAX_COMP;
@@ -17,7 +22,11 @@ public class Component {
         minY = MAX_COMP;
         maxY = 0;
         countOfBlackPixels = 0;
+        areaDensityScore = 0;
+        pageSizeScore = 0;
+        aspectRatioScore = 0;
         componentSet = false;
+        centroid = new int[2];
     }
 
     public void setRect() {
@@ -103,6 +112,7 @@ public class Component {
         maxY = c.getMaxY() > maxY ? c.getMaxY() : maxY;
 
         countOfBlackPixels += c.getCountOfBlackPixels();
+
     }
 
     public void showValues(int i) {
@@ -120,6 +130,7 @@ public class Component {
                 }
             }
         }
+        setCentroid();
     }
 
     public Image getImage() {
@@ -134,6 +145,75 @@ public class Component {
                 }
             }
         }
+    }
+
+    // Area density i.e. density of black pixels
+    private void setAreaDensityScore() {
+        if (componentSet) {
+            setRect();
+            areaDensityScore = (float) getCountOfBlackPixels() / getArea();
+        }
+    }
+
+    public float getAreaDensityScore() {
+        setAreaDensityScore();
+        return areaDensityScore;
+    }
+
+    // size score according to page
+    private void setPageSizeScore(int imgSizeX, int imgSizeY) {
+        // int smallerDimension = imgSizeX > imgSizeY ? imgSizeY : imgSizeX;
+
+        // float score1 = (float) selfImage.getWidth() / (float) (smallerDimension);
+        // float score2 = (float) selfImage.getHeight() / (float) (smallerDimension);
+
+        // pageSizeScore = (score1 + score2) * 100;
+
+        pageSizeScore = getArea() / (float) (imgSizeX * imgSizeY) * 100f;
+
+    }
+
+    public float getPageSizeScore(int imgSizeX, int imgSizeY) {
+        setPageSizeScore(imgSizeX, imgSizeY);
+        return pageSizeScore;
+    }
+
+    // AspectRatioScore
+    private void setAspectRatioScore() {
+        aspectRatioScore = (float) selfImage.getWidth() / (float) selfImage.getHeight();
+        if (aspectRatioScore > 3f) {
+            aspectRatioScore = 1 / aspectRatioScore;
+        }
+
+        if (aspectRatioScore > 1) {
+            aspectRatioScore = 1 - 1 / aspectRatioScore;
+        }
+        aspectRatioScore = 1 - aspectRatioScore;
+    }
+
+    public float getAspectRatioScore() {
+        setAspectRatioScore();
+        return aspectRatioScore;
+    }
+
+    private void setCentroid() {
+        int sumX = 0, sumY = 0, count = 0;
+        for (int i = 0; i < selfImage.getWidth(); i++) {
+            for (int j = 0; j < selfImage.getHeight(); j++) {
+                if (selfImage.pixel[i][j] != 0) {
+                    sumX += i;
+                    sumY += j;
+                    count++;
+                }
+            }
+        }
+        System.out.println(((float) sumX / (float) count) + " " + ((float) sumY / (float) count));
+        centroid[0] = minX + (sumX / count);
+        centroid[1] = minY + (sumY / count);
+    }
+
+    public int[] getCentroid() {
+        return centroid;
     }
 
 }
