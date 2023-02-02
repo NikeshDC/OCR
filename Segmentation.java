@@ -155,11 +155,23 @@ public class Segmentation {
         for (int i = 2; i < componentTotalCount; i++) {
             if (componentRoot[i] != i) {
                 listedComp[componentRoot[i]].mergeComp(listedComp[i]);
+                setPixelVal(image, listedComp[i], componentRoot[i]);
                 listedComp[i] = null;
+                // System.out.println(i + " " + componentRoot[i]);
 
                 componentsCount--;
             }
 
+        }
+    }
+
+    private void setPixelVal(Image img, Component c, int val) {
+        for (int i = c.getMinX(); i < c.getMaxX() + 1; i++) {
+            for (int j = c.getMinY(); j < c.getMaxY() + 1; j++) {
+                if (img.pixel[i][j] != 0) {
+                    img.pixel[i][j] = val;
+                }
+            }
         }
     }
 
@@ -219,7 +231,7 @@ public class Segmentation {
     }
 
     public void drawRectangles(Component[] comp) {
-        System.out.println("Comp" + componentsCount);
+        // System.out.println("Comp" + componentsCount);
         ImagePanel imgP = new ImagePanel();
         JFrame window = new JFrame();
         // printImg();
