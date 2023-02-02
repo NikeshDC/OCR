@@ -27,9 +27,14 @@ public class ProjectionProfile
             System.out.println("Given bound exceeds Image bound. <ProjectionProfile>");
             return null;
         }
-        if (xs >= xe || ys >= ye || xs < 0 || xe < 0 || ys <0 || ye < 0)
+        if ( xs < 0 || xe < 0 || ys <0 || ye < 0)
         {
-            System.out.println("Given bounds not appropriate. <ProjectionProfile>");
+            System.out.println("Given bounds not appropriate. Some bound less than zero. <ProjectionProfile>");
+            return null;
+        }
+        if (xs >= xe || ys >= ye)
+        {
+            System.out.println("Given bounds not appropriate. smaller bound greater or equal to larger bound. <ProjectionProfile>");
             return null;
         }
         int[] horizantalProfile = new int[ye -  ys + 1];
@@ -54,9 +59,14 @@ public class ProjectionProfile
             System.out.println("Given bound exceeds Image bound. <ProjectionProfile>");
             return null;
         }
-        if (xs >= xe || ys >= ye || xs < 0 || xe < 0 || ys <0 || ye < 0)
+        if ( xs < 0 || xe < 0 || ys <0 || ye < 0)
         {
-            System.out.println("Given bounds not appropriate. <ProjectionProfile>");
+            System.out.println("Given bounds not appropriate. Some bound less than zero. <ProjectionProfile>");
+            return null;
+        }
+        if (xs >= xe || ys >= ye)
+        {
+            System.out.println("Given bounds not appropriate. smaller bound greater or equal to larger bound. <ProjectionProfile>");
             return null;
         }
         int[] verticalProfile = new int[xe -  xs + 1];
