@@ -203,7 +203,9 @@ public class ImageUtility
                 r = ((pix>>16) & 0x000000ff);
                 g = ((pix>>8) & 0x000000ff);
                 b = ((pix) & 0x000000ff);
-                gray = (int)(0.33 * r + 0.33 * g + 0.33 * b);    //grayscale conversion
+                //grayscale conversion
+                gray = (int)(0.299 * r + 0.587 * g + 0.114 * b);   //luminance formula
+                //gray = (int)(0.33 * r + 0.33 * g + 0.33 * b);    //averaging
                 image.pixel[i][j] = gray;
             }
     }
