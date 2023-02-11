@@ -152,7 +152,7 @@ public class ImageUtility
             for(int i=0; i<image.getWidth(); i++)
                 for(int j=0; j<image.getHeight(); j++)
                 {
-                    int pix_byte = image.pixel[i][j] | 0x000000ff;  //only the last byte of gray image is needed
+                    int pix_byte = image.pixel[i][j] & 0x000000ff;  //only the last byte of gray image is needed
                     int pix = (pix_byte<<16) | (pix_byte<<8) | pix_byte | 0xff000000;
                     bimage.setRGB(i, j, pix);
                 }
