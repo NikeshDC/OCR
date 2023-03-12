@@ -44,12 +44,14 @@ public class TopDownSegmenter
        RectangularBound<Integer> bound = node.item;
        int[] hp = pp.getHorizantalProfile(bound.minX, bound.maxX, bound.minY, bound.maxY);
        int[] vp = pp.getVerticalProfile(bound.minX, bound.maxX, bound.minY, bound.maxY);
-       if (hp == null || vp == null){ return; }
+       //most likely the bound is single pixel thick
+       if (hp == null || vp == null){ bound.invalidate(); return; }
        filterBorderWhitespace(bound, hp, vp);
        //calculate new pp after changing bounds
        hp = pp.getHorizantalProfile(bound.minX, bound.maxX, bound.minY, bound.maxY);
        vp = pp.getVerticalProfile(bound.minX, bound.maxX, bound.minY, bound.maxY);
-       if (hp == null || vp == null){ return; }
+       //most probably bound contains noise only
+       if (hp == null || vp == null){ bound.invalidate(); return; }
        
        Range<Integer> horizantal_max_whitespace = new Range<Integer>(0, 0, 0);
        Range<Integer> horizantal_cur_whitespace = new Range<Integer>(0, 0, 0);
@@ -148,6 +150,12 @@ public class TopDownSegmenter
        int vli = vp.length - 1;
        while(vli >= 0 && vp[vli] <= verticalWhitespaceThreshold)  //find the last value which is not a whitespace
             vli--;
+       
+       if(vfi > vli || hfi > hli)
+       {//most likely to be noise inside the bounds i.e. less than whitespace threshold everywhere
+           bound.invalidate();
+           return;
+       }
            
        bound.maxX = bound.minX + vli;
        bound.maxY = bound.minY + hli;
@@ -166,7 +174,8 @@ public class TopDownSegmenter
     {
         if (node.isLeaf())
         {
-            segments.add(node.item);
+            if(node.item != null && node.item.isValid())
+                segments.add(node.item);
             return;
         }
         //else traverse in inorder
