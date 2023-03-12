@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.io.FileWriter;
+import java.awt.image.BufferedImage;
 
 public class TopDownSegmenterForServer
 {
@@ -9,20 +10,29 @@ public class TopDownSegmenterForServer
     {
         String imageName = args[0];
         String outputfileName = args[1];
-        
-        segmentAndSave(imageName, outputfileName);
+        String outputImageName;
+        if(args.length > 2)
+            outputImageName = args[2];
+        else
+            outputImageName = "segmented_image.jpg";
+        segmentAndSave(imageName, outputfileName, outputImageName);
     }
     
-    public static void segmentAndSave(String imageName, String outputFileName)
+    public static void segmentAndSave(String imageName, String outputFileName, String outImageName)
     {//saves rectangular bounds of segments in order in a text file
-        Image testImage = ImageUtility.readImageInGrayScale(imageName);
-        Image testImageBin = Binarization.simpleThreshold(testImage, 128);
+        Image srcImage = ImageUtility.readImageInGrayScale(imageName);
+        Image imageBin = Binarization.simpleThreshold(srcImage, 128);
         //Image testImageBin = BinarizeForServer.getBinarizedUsingPredictor(testImagePath);
         
-        TopDownSegmenter segmenter = new TopDownSegmenter(testImageBin);
+        TopDownSegmenter segmenter = new TopDownSegmenter(imageBin);
         segmenter.segment();
         ArrayList<RectangularBound<Integer>> segments = segmenter.getSegments();
         
+        //save the segmented image layout also
+        BufferedImage outBufImage = ImageUtility.getBufferedImage(imageBin);
+        //adding the boundry boxes to image
+        segmenter.addSegmentsToBufferedImage(outBufImage);
+        ImageUtility.writeImage(outBufImage, outImageName);
         
         //write the segments to the file in order
         File outfile = new File(outputFileName);
