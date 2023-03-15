@@ -52,7 +52,7 @@ public class Image
     public int getMaxY()
     { return sizeY -1; }
     
-    public void LogicalAnd(Image image, float reducer)
+    public void logicalAnd(Image image)
     {//perform pixelwise subtraction
         if(image.getType() != TYPE.BIN || this.type != TYPE.BIN )
         {
