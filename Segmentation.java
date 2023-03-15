@@ -157,7 +157,6 @@ public class Segmentation {
                 listedComp[componentRoot[i]].mergeComp(listedComp[i]);
                 setPixelVal(image, listedComp[i], componentRoot[i]);
                 listedComp[i] = null;
-                // System.out.println(i + " " + componentRoot[i]);
 
                 componentsCount--;
             }
@@ -209,10 +208,14 @@ public class Segmentation {
     public void segment() {
         labelComponents(); // label the components initially and set the equivalence relation between these
                            // components using componentSequence, componentRoot
+
         prepareComponentList(); // make component objects for each component labeled above and set their
                                 // rectangle bounds
+
         mergeSiblings(); // merge the equivalent component objects
+
         setComponentsImage();
+        
         // drawRectangles(listedComp); // show rectangle for each components in a new
         // JFrame
         // window
