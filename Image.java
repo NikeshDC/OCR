@@ -52,6 +52,18 @@ public class Image
     public int getMaxY()
     { return sizeY -1; }
     
+    public void LogicalAnd(Image image, float reducer)
+    {//perform pixelwise subtraction
+        if(image.getType() != TYPE.BIN || this.type != TYPE.BIN )
+        {
+            System.out.println("Cannot logical-and unbinarized Image!");
+            return;
+        }
+        for (int i = 0; i < sizeX; i++) 
+            for (int j = 0; j < sizeY; j++)
+                pixel[i][j] = pixel[i][j] & image.pixel[i][j];
+    }
+    
     public void subtract(Image image)
     {
         subtract(image, 1.0f);
