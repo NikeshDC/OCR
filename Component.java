@@ -10,7 +10,7 @@ public class Component {
     private int countOfBlackPixels;
     private boolean componentSet;
     private Image selfImage;
-    private int[] centroid;
+
     //
     private float areaDensityScore;
     private float pageSizeScore;
@@ -26,7 +26,6 @@ public class Component {
         pageSizeScore = 0;
         aspectRatioScore = 0;
         componentSet = false;
-        centroid = new int[2];
     }
 
     public void setRect() {
@@ -38,8 +37,8 @@ public class Component {
         int[] rectt = new int[4];
         rectt[0] = minX;
         rectt[1] = minY;
-        rectt[2] = height;
-        rectt[3] = width;
+        rectt[2] = width;
+        rectt[3] = height;
         return rectt;
     }
 
@@ -130,7 +129,6 @@ public class Component {
                 }
             }
         }
-        setCentroid();
     }
 
     public Image getImage() {
@@ -195,25 +193,4 @@ public class Component {
         setAspectRatioScore();
         return aspectRatioScore;
     }
-
-    private void setCentroid() {
-        int sumX = 0, sumY = 0, count = 0;
-        for (int i = 0; i < selfImage.getWidth(); i++) {
-            for (int j = 0; j < selfImage.getHeight(); j++) {
-                if (selfImage.pixel[i][j] != 0) {
-                    sumX += i;
-                    sumY += j;
-                    count++;
-                }
-            }
-        }
-        System.out.println(((float) sumX / (float) count) + " " + ((float) sumY / (float) count));
-        centroid[0] = minX + (sumX / count);
-        centroid[1] = minY + (sumY / count);
-    }
-
-    public int[] getCentroid() {
-        return centroid;
-    }
-
 }
