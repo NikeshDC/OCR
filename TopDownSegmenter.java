@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 
 public class TopDownSegmenter
 {
-    float whitespaceThresholdFactor = 0.01f; //1% of the height or width
+    float whitespaceThresholdFactor = 0.001f; //1% of the height or width
     int segmentationThresholdWhitespaceLength = 10; //segment upto 20 whitespacings of layout
     private Image image;
     private ProjectionProfile pp;
@@ -14,6 +14,7 @@ public class TopDownSegmenter
     public TopDownSegmenter(Image image)
     {
         this.image = image;
+        segmentationThresholdWhitespaceLength = (int)Math.min(30, image.getWidth() * 0.01);
         pp = new ProjectionProfile(this.image);
     }
     

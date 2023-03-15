@@ -31,16 +31,10 @@ public class BinarizeForServer
         Binarization sauv = new Sauvola(k, w);
         sauv.setImage(srcimg);
         sauv.binarize();
+
+        Image openedImage = ImageUtility.open(sauv.getBinarizedImage(), 3);
+        Image closedImage = ImageUtility.close(openedImage, 3);
         
-        //Image dilatedImage = ImageUtility.dilate(sauv.getBinarizedImage(), 5);
-        
-        //Segmentation segmentation = new Segmentation(dilatedImage);
-        //segmentation.segment();
-        
-        //Binarization otsuBound = new OtsuBounds(srcimg, segmentation.getComponents());
-        //otsuBound.binarize();
-        
-        //save binarized image
-        ImageUtility.writeImage(sauv.getBinarizedImage(), savepath);
+        ImageUtility.writeImage(closedImage, savepath);
     }
 }
