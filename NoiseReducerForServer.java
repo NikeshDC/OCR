@@ -1,7 +1,7 @@
 public class NoiseReducerForServer {
     public static void main(String args[]) {
-        // reduceNoiseAndSave(args[0], args[1]);
-        reduceNoiseAndSave("tempb.jpg", "denoised_tempb.png");
+        reduceNoiseAndSave(args[0], args[1]);
+//         reduceNoiseAndSave("tempb.jpg", "denoised_tempb.png");
     }
 
     public static void reduceNoiseAndSave(String imagepath, String savepath) {
