@@ -9,6 +9,10 @@ public class NoiseReducer {
     float dilationPercentage;
     float whitespaceThresholdFactor;
 
+    public NoiseReducer() {
+
+    }
+
     public NoiseReducer(Image _img, float _proximityThreshold1, float _proximityThreshold2, float _heightThreshold1,
             float _heightThreshold2, float _dilationPercentage, float _whitespaceThresholdFactor) {
         img = _img;
@@ -32,6 +36,15 @@ public class NoiseReducer {
         return denoisedImage;
     }
 
+    public Image getCleanImage2() {
+        getTextComponents2(segmentation.getComponents(),
+                segmentation.getComponentsCount());
+        // segmentation.setComponentsArray(filteredComponents);
+        Image denoisedImage = ImageUtility.addComponentsOnImage(segmentation.getComponents(),
+                segmentation.getComponentsCount(), img.getWidth(), img.getHeight());
+        return denoisedImage;
+    }
+
     public void getTextComponents(Component[] comps, int componentsCount) {
         // Border Proximity Check
         Component[] filteredComponents1 = checkBorderProximity(segmentation.getComponents(),
@@ -47,8 +60,31 @@ public class NoiseReducer {
         segmentation.setComponentsArray(filteredComponents3);
 
         // Second Pass Border Noise Removal
-        Component[] filteredComponents4 = checkBorderProximity2(filteredComponents2, segmentation.getComponentsCount());
-        segmentation.setComponentsArray(filteredComponents4);
+        // Component[] filteredComponents4 = checkBorderProximity2(filteredComponents2,
+        // segmentation.getComponentsCount());
+        // segmentation.setComponentsArray(filteredComponents4);
+
+        // return filteredComponents3;
+    }
+
+    public void getTextComponents2(Component[] comps, int componentsCount) {
+        // Border Proximity Check
+        Component[] filteredComponents1 = checkBorderProximity2(segmentation.getComponents(),
+                segmentation.getComponentsCount());
+        segmentation.setComponentsArray(filteredComponents1);
+
+        // Height
+        Component[] filteredComponents2 = checkHeightScore(filteredComponents1, segmentation.getComponentsCount());
+        segmentation.setComponentsArray(filteredComponents2);
+
+        // Width
+        Component[] filteredComponents3 = checkWidthScore(filteredComponents2, segmentation.getComponentsCount());
+        segmentation.setComponentsArray(filteredComponents3);
+
+        // Second Pass Border Noise Removal
+        // Component[] filteredComponents4 = checkBorderProximity2(filteredComponents2,
+        // segmentation.getComponentsCount());
+        // segmentation.setComponentsArray(filteredComponents4);
 
         // return filteredComponents3;
     }
@@ -226,6 +262,34 @@ public class NoiseReducer {
     public void test() {
         int[] wh = getAverageDimensions(ImageUtility.readImage("test.png"));
         System.out.println(wh[0] + " " + wh[1]);
+    }
+
+    public Component[] checkHeightScorePX(Component[] comps, int componentsCount, int heightScoreThresholdPX) {
+        Component[] newComps = new Component[componentsCount];
+        int count = 0;
+
+        for (int i = 0; i < componentsCount; i++) {
+            int[] compRect = comps[i].getRect(); // minX,minY,width,height
+            if ((compRect[3] < (heightScoreThresholdPX))) {
+                newComps[count] = comps[i];
+                count++;
+            }
+        }
+        return newComps;
+    }
+
+    public Component[] checkWidthScorePX(Component[] comps, int componentsCount, int heightScoreThresholdPX) {
+        Component[] newComps = new Component[componentsCount];
+        int count = 0;
+
+        for (int i = 0; i < componentsCount; i++) {
+            int[] compRect = comps[i].getRect(); // minX,minY,width,height
+            if ((compRect[2] < (heightScoreThresholdPX))) {
+                newComps[count] = comps[i];
+                count++;
+            }
+        }
+        return newComps;
     }
 
 }
