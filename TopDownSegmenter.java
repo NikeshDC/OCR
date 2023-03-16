@@ -134,7 +134,7 @@ public class TopDownSegmenter
        segment(node.getRightChild());
     }
     
-    public void filterBorderWhitespace(RectangularBound<Integer> bound, int[] hp, int vp[])
+    public void filterBorderWhitespace(RectangularBound<Integer> bound, int[] hp, int[] vp)
     {
        int horizantalWhitespaceThreshold = (int)(whitespaceThresholdFactor * hp.length);
        int hfi = 0;

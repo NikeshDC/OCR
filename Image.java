@@ -16,6 +16,17 @@ public class Image
         type = _type;
     }
     
+    public Image getCroppedImage(int minX, int maxX, int minY, int maxY)
+    {
+        Image croppedImage = new Image(maxX - minX + 1, maxY - minY + 1,this.type);
+        for (int i = 0; i < croppedImage.getWidth(); i++) {
+            for (int j = 0; j < croppedImage.getHeight(); j++) {
+                croppedImage.pixel[i][j] = pixel[i + minX][j + minY];
+            }
+        }
+        return croppedImage;
+    }
+    
     public Image(Image _image)
     {
         initialize(_image.getWidth(), _image.getHeight(), _image.getType());
