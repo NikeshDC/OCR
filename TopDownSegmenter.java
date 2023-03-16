@@ -58,7 +58,7 @@ public class TopDownSegmenter {
         Range<Integer> horizantal_max_whitespace = new Range<Integer>(0, 0, 0);
         Range<Integer> horizantal_cur_whitespace = new Range<Integer>(0, 0, 0);
         // find max whitespace in horizantal profile
-        int horizantalWhitespaceThreshold = (int) Math.max((whitespaceThresholdFactor * hp.length), 3);
+        int horizantalWhitespaceThreshold = (int) Math.max((whitespaceThresholdFactor * hp.length), 2);
         for (int i = 0; i < hp.length;) {
             while (i < hp.length && hp[i] > horizantalWhitespaceThreshold)
                 i++;
@@ -75,7 +75,7 @@ public class TopDownSegmenter {
         Range<Integer> vertical_max_whitespace = new Range<Integer>(0, 0, 0);
         Range<Integer> vertical_cur_whitespace = new Range<Integer>(0, 0, 0);
         // find max whitespace in vertical profile
-        int verticalWhitespaceThreshold = (int) Math.max((whitespaceThresholdFactor * vp.length), 3);
+        int verticalWhitespaceThreshold = (int) Math.max((whitespaceThresholdFactor * vp.length), 2);
         for (int i = 0; i < vp.length;) {
             while (i < vp.length && vp[i] > verticalWhitespaceThreshold)
                 i++;
