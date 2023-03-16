@@ -7,15 +7,18 @@ public class NoiseReducer {
     float heightScoreThreshold1;
     float heightScoreThreshold2;
     float dilationPercentage;
+    float whitespaceThresholdFactor;
 
     public NoiseReducer(Image _img, float _proximityThreshold1, float _proximityThreshold2, float _heightThreshold1,
-            float _heightThreshold2, float _dilationPercentage) {
+            float _heightThreshold2, float _dilationPercentage, float _whitespaceThresholdFactor) {
         img = _img;
+        img = removeBorderWhiteSpace();
         borderProximityThreshold1 = _proximityThreshold1;
         borderProximityThreshold2 = _proximityThreshold2;
         heightScoreThreshold1 = _heightThreshold1;
         heightScoreThreshold2 = _heightThreshold2;
         dilationPercentage = _dilationPercentage;
+        whitespaceThresholdFactor = _whitespaceThresholdFactor;
         segmentation = new Segmentation(img);
         segmentation.segment();
     }
@@ -142,4 +145,87 @@ public class NoiseReducer {
                 segment.getComponentsCount(), img.getWidth(), img.getHeight());
         denoisedImage.logicalAnd(heightfilteredImage);
     }
+
+    public void filterBorderWhitespace(RectangularBound<Integer> bound, int[] hp, int[] vp) {
+        int horizantalWhitespaceThreshold = (int) (whitespaceThresholdFactor * hp.length);
+        int hfi = 0;
+        while (hfi < hp.length && hp[hfi] <= horizantalWhitespaceThreshold) // find the first value which is not a
+                                                                            // whitespace
+            hfi++;
+        int hli = hp.length - 1;
+        while (hli >= 0 && hp[hli] <= horizantalWhitespaceThreshold) // find the last value which is not a whitespace
+            hli--;
+
+        int verticalWhitespaceThreshold = (int) (whitespaceThresholdFactor * vp.length);
+        int vfi = 0;
+        while (vfi < vp.length && vp[vfi] <= verticalWhitespaceThreshold) // find the first value which is not a
+                                                                          // whitespace
+            vfi++;
+        int vli = vp.length - 1;
+        while (vli >= 0 && vp[vli] <= verticalWhitespaceThreshold) // find the last value which is not a whitespace
+            vli--;
+
+        if (vfi > vli || hfi > hli) {// most likely to be noise inside the bounds i.e. less than whitespace threshold
+                                     // everywhere
+            bound.invalidate();
+            return;
+        }
+
+        bound.maxX = bound.minX + vli;
+        bound.maxY = bound.minY + hli;
+
+        bound.minX += vfi;
+        bound.minY += hfi;
+    }
+
+    public Image removeBorderWhiteSpace() {
+        RectangularBound<Integer> recBound = new RectangularBound<>();
+        recBound.minX = 0;
+        recBound.minY = 0;
+        recBound.maxX = img.getWidth();
+        recBound.maxY = img.getHeight();
+        ProjectionProfile pp = new ProjectionProfile(img);
+        int[] hp = pp.getHorizantalProfile();
+        int[] vp = pp.getVerticalProfile();
+        filterBorderWhitespace(recBound, hp, vp);
+        // System.out.println(recBound.minX + " " + recBound.minY + " " + recBound.maxX
+        // + " " + recBound.maxY);
+        // System.out.println(hp[1100] + " " + vp[1100]);
+        Image croppedImage = new Image(recBound.maxX - recBound.minX + 1, recBound.maxY - recBound.minY + 1,
+                Image.TYPE.BIN);
+        for (int i = 0; i < croppedImage.getWidth(); i++) {
+            for (int j = 0; j < croppedImage.getHeight(); j++) {
+                croppedImage.pixel[i][j] = img.pixel[i + recBound.minX][j + recBound.minY];
+            }
+        }
+        // img = croppedImage;
+        return croppedImage;
+    }
+
+    public int[] getAverageDimensions(Image _image) {
+        if (_image.type != Image.TYPE.BIN) {
+            _image = Binarization.simpleThreshold(_image, 128);
+        }
+        int[] widthHeight = new int[2];
+        Segmentation segmentation = new Segmentation(_image);
+        segmentation.segment();
+        Component[] comps = segmentation.getComponents();
+        int componentsCount = segmentation.getComponentsCount();
+
+        int widhtSum = 0;
+        int heightSum = 0;
+        for (int i = 0; i < componentsCount; i++) {
+            widhtSum += comps[i].getRect()[2];
+            heightSum += comps[i].getRect()[3];
+        }
+        widthHeight[0] = widhtSum / componentsCount;
+        widthHeight[1] = heightSum / componentsCount;
+        return widthHeight;
+    }
+
+    public void test() {
+        int[] wh = getAverageDimensions(ImageUtility.readImage("test.png"));
+        System.out.println(wh[0] + " " + wh[1]);
+    }
+
 }
